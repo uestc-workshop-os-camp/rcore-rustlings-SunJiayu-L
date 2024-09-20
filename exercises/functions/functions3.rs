@@ -2,11 +2,14 @@
 //
 // Execute `rustlings hint functions3` or use the `hint` watch subcommand for a
 // hint.
-
-// I AM NOT DONE
+// 函数：
+// fn 函数名(参数名:参数类型) -> 返回值类型 {
+//  
+// ~I AM NOT DONE
 
 fn main() {
-    call_me();
+    let num :u32=10;
+    call_me(num);
 }
 
 fn call_me(num: u32) {
