@@ -7,12 +7,12 @@
 // Execute `rustlings hint move_semantics2` or use the `hint` watch subcommand
 // for a hint.
 
-// I AM NOT DONE
+// ~I AM NOT DONE
 
 fn main() {
     let vec0 = Vec::new();
 
-    let mut vec1 = fill_vec(vec0);
+    let mut vec1 = fill_vec(vec0.clone()); //在 Rust 中，当你传递一个 Vec<i32> 给一个函数时，你实际上是在传递整个向量的所有权，
 
     println!("{} has length {}, with contents: `{:?}`", "vec0", vec0.len(), vec0);
 
