@@ -7,6 +7,7 @@
 
 fn trim_me(input: &str) -> String {
     // TODO: Remove whitespace from both ends of a string!
+    //input.trim()：移除字符串 input 两端的空白字符（包括空格、制表符和换行符）。
     input.trim().to_string()
 }
 

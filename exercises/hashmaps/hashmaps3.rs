@@ -14,7 +14,7 @@
 // Execute `rustlings hint hashmaps3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
+// ~I AM NOT DONE
 
 use std::collections::HashMap;
 
@@ -34,11 +34,24 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
         let team_1_score: u8 = v[2].parse().unwrap();
         let team_2_name = v[1].to_string();
         let team_2_score: u8 = v[3].parse().unwrap();
-        // TODO: Populate the scores table with details extracted from the
-        // current line. Keep in mind that goals scored by team_1
-        // will be the number of goals conceded from team_2, and similarly
-        // goals scored by team_2 will be the number of goals conceded by
-        // team_1.
+        // 如果队伍1已经在HashMap中，则更新其进球数和失球数
+        //scores.get_mut(&team_1_name) 返回的是一个 Option<&mut Team> 类型的值。
+        //如果 team_1_name 在 scores HashMap 中存在，则返回 Some(&mut Team)，即包含一个指向 Team 结构体的可变引用。
+        //如果右式返回 Some(&mut Team)，则 let Some(team1) = scores.get_mut(&team_1_name) 将 &mut Team 绑定到 team1 变量上。
+        if let Some(team1) = scores.get_mut(&team_1_name) {
+            team1.goals_scored += team_1_score;
+            team1.goals_conceded += team_2_score;
+        } else {
+            // 如果队伍1不在HashMap中，则插入新的记录
+            scores.insert(team_1_name, Team { goals_scored: team_1_score, goals_conceded: team_2_score });
+        }
+
+        if let Some(team2) = scores.get_mut(&team_2_name) {
+            team2.goals_scored += team_2_score;
+            team2.goals_conceded += team_1_score;
+        } else {
+            scores.insert(team_2_name, Team { goals_scored: team_2_score, goals_conceded: team_1_score });
+        }
     }
     scores
 }
