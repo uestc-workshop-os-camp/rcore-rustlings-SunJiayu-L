@@ -1,7 +1,13 @@
 // tests5.rs
 //
+
+//当在一个项目声明上标记了`unsafe`时，比如一个函数、一个trait等等，它会在旁边声明一个contract。
+//但是，合同的内容不能只用一个关键字来表达。因此，你有责任在文档注释的`# Safety`部分手动说明它。
+//当在大括号括起来的代码块上标记`unsafe`时，它声明遵守了某种约定，例如某个指针参数的有效性，某个内存地址的所有权。
+//然而，像上面的文本一样，你仍然需要在代码块的注释中说明如何观察契约。
+//注意:所有的注释都是为了代码的可读性和可维护性，而Rust编译器将其对代码可靠性的信任交给了自己!
+//如果你不能证明自己代码的内存安全性和可靠性，请退一步，使用安全的代码!
 // An `unsafe` in Rust serves as a contract.
-//
 // When `unsafe` is marked on an item declaration, such as a function,
 // a trait or so on, it declares a contract alongside it. However,
 // the content of the contract cannot be expressed only by a single keyword.
@@ -22,8 +28,10 @@
 // Execute `rustlings hint tests5` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
+// ~I AM NOT DONE
+//? 测试目的，有一个u32的变量t,初始值为0x12345678，通过调用modify_by_address函数，将t的值修改为0xAABBCCDD。
+//? 通过 &mut t as *mut u32 as usize 将 t 的可变引用转换为一个原始指针，然后再转换为 usize。这表示 t 的内存地址。
+//? 在解引用的时候要正确转换回指针类型，然后才能进行解引用和修改。
 /// # Safety
 ///
 /// The `address` must contain a mutable reference to a valid `u32` value.
@@ -32,7 +40,8 @@ unsafe fn modify_by_address(address: usize) {
     // code's behavior and the contract of this function. You may use the
     // comment of the test below as your format reference.
     unsafe {
-        todo!("Your code goes here")
+        let ptr = address as *mut u32;
+        *ptr = 0xAABBCCDD;
     }
 }
 
