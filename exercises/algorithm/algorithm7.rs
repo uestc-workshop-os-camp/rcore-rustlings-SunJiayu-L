@@ -3,71 +3,86 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
+// ~I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
 	data: Vec<T>,
 }
 impl<T> Stack<T> {
-	fn new() -> Self {
-		Self {
-			size: 0,
-			data: Vec::new(),
-		}
-	}
-	fn is_empty(&self) -> bool {
-		0 == self.size
-	}
-	fn len(&self) -> usize {
-		self.size
-	}
-	fn clear(&mut self) {
-		self.size = 0;
-		self.data.clear();
-	}
-	fn push(&mut self, val: T) {
-		self.data.push(val);
-		self.size += 1;
-	}
-	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
-	}
-	fn peek(&self) -> Option<&T> {
-		if 0 == self.size {
-			return None;
-		}
-		self.data.get(self.size - 1)
-	}
-	fn peek_mut(&mut self) -> Option<&mut T> {
-		if 0 == self.size {
-			return None;
-		}
-		self.data.get_mut(self.size - 1)
-	}
-	fn into_iter(self) -> IntoIter<T> {
-		IntoIter(self)
-	}
-	fn iter(&self) -> Iter<T> {
-		let mut iterator = Iter { 
-			stack: Vec::new() 
-		};
-		for item in self.data.iter() {
-			iterator.stack.push(item);
-		}
-		iterator
-	}
-	fn iter_mut(&mut self) -> IterMut<T> {
-		let mut iterator = IterMut { 
-			stack: Vec::new() 
-		};
-		for item in self.data.iter_mut() {
-			iterator.stack.push(item);
-		}
-		iterator
-	}
+    fn new() -> Self {
+        Self {
+            size: 0,
+            data: Vec::new(),
+        }
+    }
+    
+    fn is_empty(&self) -> bool {
+        0 == self.size
+    }
+    
+    fn len(&self) -> usize {
+        self.size
+    }
+    
+    fn clear(&mut self) {
+        self.size = 0;
+        self.data.clear();
+    }
+    
+    fn push(&mut self, val: T) {
+        self.data.push(val);
+        self.size += 1;
+    }
+    
+    fn pop(&mut self) -> Option<T> {
+        if self.is_empty() {
+            None
+        } else {
+            self.size -= 1;
+            self.data.pop() // Remove and return the last element
+        }
+    }
+
+    fn peek(&self) -> Option<&T> {
+        if 0 == self.size {
+            return None;
+        }
+        self.data.get(self.size - 1)
+    }
+
+    fn peek_mut(&mut self) -> Option<&mut T> {
+        if 0 == self.size {
+            return None;
+        }
+        self.data.get_mut(self.size - 1)
+    }
+
+    fn into_iter(self) -> IntoIter<T> {
+        IntoIter(self)
+    }
+
+    fn iter(&self) -> Iter<T> {
+        let mut iterator = Iter { 
+            stack: Vec::new() 
+        };
+        for item in self.data.iter() {
+            iterator.stack.push(item);
+        }
+        iterator
+    }
+
+    fn iter_mut(&mut self) -> IterMut<T> {
+        let mut iterator = IterMut { 
+            stack: Vec::new() 
+        };
+        for item in self.data.iter_mut() {
+            iterator.stack.push(item);
+        }
+        iterator
+    }
 }
+
 struct IntoIter<T>(Stack<T>);
 impl<T: Clone> Iterator for IntoIter<T> {
 	type Item = T;
@@ -99,10 +114,34 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 	}
 }
 
-fn bracket_match(bracket: &str) -> bool
-{
-	//TODO
-	true
+fn bracket_match(bracket: &str) -> bool {
+    let mut stack = Stack::new();
+
+    for c in bracket.chars() {
+        match c {
+            '(' | '{' | '[' => {
+                stack.push(c);
+            }
+            ')' => {
+                if stack.pop() != Some('(') {
+                    return false;
+                }
+            }
+            '}' => {
+                if stack.pop() != Some('{') {
+                    return false;
+                }
+            }
+            ']' => {
+                if stack.pop() != Some('[') {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    stack.is_empty()
 }
 
 #[cfg(test)]

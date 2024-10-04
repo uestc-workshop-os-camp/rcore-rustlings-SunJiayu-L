@@ -1,24 +1,24 @@
 //! This is the build script for both tests7 and tests8.
 //!
 //! You should modify this file to make both exercises pass.
+use std::env;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 fn main() {
-    // In tests7, we should set up an environment variable
-    // called `TEST_FOO`. Print in the standard output to let
-    // Cargo do it.
-    let timestamp = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .unwrap()
-        .as_secs(); // What's the use of this timestamp here?
-    let your_command = format!(
-        "Your command here with {}, please checkout exercises/tests/build.rs",
-        timestamp
-    );
-    println!("cargo:{}", your_command);
+    // Get the current timestamp in seconds since UNIX epoch.
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_secs();
 
-    // In tests8, we should enable "pass" feature to make the
-    // testcase return early. Fill in the command to tell
-    // Cargo about that.
-    let your_command = "Your command here, please checkout exercises/tests/build.rs";
-    println!("cargo:{}", your_command);
+    // Set the TEST_FOO environment variable
+    println!("cargo:rerun-if-changed=build.rs"); // Instruct Cargo to rerun this script if build.rs changes
+    println!("cargo:rustc-env=TEST_FOO={}", timestamp);
+
+    // Set feature flag conditionally based on the current time
+    if timestamp % 2 == 0 { // Example condition; you can customize this
+        // Enable `pass` feature if the timestamp is even
+        println!("cargo:rustc-cfg=feature=\"pass\"");
+    }
 }
+
