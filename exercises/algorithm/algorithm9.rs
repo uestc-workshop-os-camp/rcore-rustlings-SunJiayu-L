@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+// ~I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -12,7 +12,7 @@ where
     T: Default,
 {
     count: usize,
-    items: Vec<T>,
+    items: Vec<Option<T>>,
     comparator: fn(&T, &T) -> bool,
 }
 
@@ -23,7 +23,7 @@ where
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
             count: 0,
-            items: vec![T::default()],
+            items: vec![None], // Start with a dummy element at index 0
             comparator,
         }
     }
@@ -37,7 +37,13 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count += 1;
+        if self.items.len() <= self.count {
+            self.items.push(Some(value));
+        } else {
+            self.items[self.count] = Some(value);
+        }
+        self.sift_up(self.count);
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +63,59 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if right <= self.count && (self.comparator)(&self.items[right].as_ref().unwrap(), &self.items[left].as_ref().unwrap()) {
+            right
+        } else {
+            left
+        }
+    }
+
+    fn sift_up(&mut self, idx: usize) {
+        let mut current = idx;
+        while current > 1 {
+            let parent = self.parent_idx(current);
+            if (self.comparator)(&self.items[current].as_ref().unwrap(), &self.items[parent].as_ref().unwrap()) {
+                self.items.swap(current, parent);
+                current = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    fn sift_down(&mut self, idx: usize) {
+        let mut current = idx;
+        while self.children_present(current) {
+            let smallest_child = self.smallest_child_idx(current);
+            if (self.comparator)(&self.items[smallest_child].as_ref().unwrap(), &self.items[current].as_ref().unwrap()) {
+                self.items.swap(current, smallest_child);
+                current = smallest_child;
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+impl<T> Iterator for Heap<T>
+where
+    T: Default,
+{
+    type Item = T;
+
+    fn next(&mut self) -> Option<T> {
+        if self.is_empty() {
+            return None;
+        }
+        let root = self.items[1].take();
+        self.count -= 1;
+        if self.count > 0 {
+            self.items[1] = self.items[self.count + 1].take(); // Move last element to root
+            self.sift_down(1);
+        }
+        root
     }
 }
 
@@ -74,18 +131,6 @@ where
     /// Create a new MaxHeap
     pub fn new_max() -> Self {
         Self::new(|a, b| a > b)
-    }
-}
-
-impl<T> Iterator for Heap<T>
-where
-    T: Default,
-{
-    type Item = T;
-
-    fn next(&mut self) -> Option<T> {
-        //TODO
-		None
     }
 }
 
@@ -116,6 +161,7 @@ impl MaxHeap {
 #[cfg(test)]
 mod tests {
     use super::*;
+    
     #[test]
     fn test_empty_heap() {
         let mut heap = MaxHeap::new::<i32>();
